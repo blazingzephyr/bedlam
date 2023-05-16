@@ -1,0 +1,12 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@notionhq/client": "^2.2.5",
+    "discord.js": "^14.11.0",
+    "dotenv": "^16.0.3",
+    "typescript": "^5.0.4"
+  },
+  "scripts": {
+    "build": "npx tsc && node public/index.js"
+  }
+}

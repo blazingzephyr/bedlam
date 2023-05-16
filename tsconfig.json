@@ -1,0 +1,39 @@
+{
+	"compilerOptions":
+	{
+		"allowUnreachableCode": true,
+		"allowUnusedLabels": true,
+		"exactOptionalPropertyTypes": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"strict": true,
+		"useUnknownInCatchVariables": true,
+		"noUncheckedIndexedAccess": true,
+
+		"module": "ESNext",
+		"moduleResolution": "nodenext",
+		"resolveJsonModule": true,
+
+		"declaration": true,
+		"declarationMap": true,
+		"importHelpers": true,
+		"inlineSources": true,
+		"newLine": "lf",
+		"noEmitHelpers": true,
+		"outDir": "distt",
+		"preserveConstEnums": true,
+		"removeComments": false,
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"lib": ["ESNext"],
+		"target": "ES2021",
+		"useDefineForClassFields": true
+	},
+  	"include": ["src/**/*"],
+  	"exclude": ["node_modules"]
+}
