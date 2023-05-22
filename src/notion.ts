@@ -2,66 +2,92 @@
  * Imports.
  */
 import { Client } from '@notionhq/client';
+import { FullObjectResponse, ObjectUpdatedEventHandler } from './objectUpdated.js'
 import { SearchParameters } from '@notionhq/client/build/src/api-endpoints.js';
-import { ObjectResponse, ObjectUpdatedEventHandler } from './objectUpdated.js'
 
 /**
- * Notion API client.
+ * Notion API client initialization options.
  */
-let client: Client;
-
-/**
- * Search query options.
- */
-let searchParameters: SearchParameters;
-
-/**
- * Collection of page last update timestamps.
- */
-let lastUpdated: Map<string, string>;
-
-/**
- * Initializes Notion client with the given environmental variables.
- * @param authToken Notion integration token.
- */
-export async function initializeNotion(authToken: string)
+type NotionOptions =
 {
-    lastUpdated = new Map<string, string>();
-    client = new Client({ auth: authToken });
-    searchParameters = {};
+    /**
+     * Notion integration token.
+     */
+    integrationToken: string,
 
-    const list = await client.search(searchParameters);
-    for (const entry of list.results)
-    {
-        const object = entry as ObjectResponse;
-        lastUpdated.set(object.id, object.last_edited_time);
-    }
+    /**
+     * Interval between Notion API requests (in ms).
+     */
+    interval: number
 }
 
 /**
- * Continuously watch for object updates and raise an event when it happens.
- * @param objectUpdated Event raised on an object update. 
- * @param interval Interval between Notion API requests (in ms).
+ * Run /search on Notion and return the results.
+ * @param client Notion API client used for the search.
+ * @returns Search results.
  */
-export async function watch(objectUpdated: ObjectUpdatedEventHandler, interval: number)
+async function search(client: Client)
 {
+    const searchParameters: SearchParameters = { sort: { direction: "descending", timestamp: "last_edited_time" } };
+    const entries: FullObjectResponse[] = [];
+    let hasMore = true;
+
+    while (hasMore)
+    {
+        const response = await client.search(searchParameters);
+        const results = response.results as FullObjectResponse[];
+        entries.push(...results);
+
+        hasMore = response.has_more;
+        searchParameters.start_cursor = response.next_cursor ?? "";
+    }
+
+    return entries;
+}
+
+/**
+ * Initialize Notion client.
+ * Then continuously watch for object updates and raise an event when it happens.
+ * @param objectUpdated Event raised when an object gets updated.
+ * @param options Initialization options.
+ */
+export async function watch(objectUpdated: ObjectUpdatedEventHandler, options: NotionOptions)
+{
+    const current = new Map<string, string>();
+    const updated: FullObjectResponse[] = [];
+
+    const client = new Client({ auth: options.integrationToken });
+    const list = await search(client);
+
+    for (const entry of list)
+    {
+        current.set(entry.id, entry.last_edited_time);
+    }
+
     setInterval
     (
         async () =>
         {
-            const list = await client.search(searchParameters);
-            for (const entry of list.results)
+            const list = await search(client);
+            for (const entry of list)
             {
-                const object = entry as ObjectResponse;
-                const requiresUpdate = !lastUpdated.has(object.id) || object.last_edited_time !== lastUpdated.get(object.id);
+                const object = entry as FullObjectResponse;
+                const requiresUpdate = !current.has(object.id) || object.last_edited_time !== current.get(object.id);
 
                 if (requiresUpdate)
                 {
-                    lastUpdated.set(object.id, object.last_edited_time);
-                    objectUpdated(object, list, client);
+                    current.set(object.id, object.last_edited_time);
+                    updated.push(object);
                 }
             }
+
+            for (const entry of updated)
+            {
+                objectUpdated({ object: entry, list: list, client: client });
+            }
+
+            updated.length = 0;
         },
-        interval
+        options.interval
     )
 }

@@ -1,0 +1,24 @@
+{
+    "notion":
+    {
+        "integrationToken": "",
+        "interval": 15000
+    },
+
+    "discord":
+    {
+        "token": "",
+        "intents": 524287,
+        "log": ""
+    },
+
+    "startup":
+    {
+        "content": "I'm ready!"
+    },
+
+    "embed":
+    {
+        "color": 16711845
+    }
+}

@@ -2,14 +2,35 @@
  * Imports.
  */
 import { Client } from '@notionhq/client';
-import { DatabaseObjectResponse, PageObjectResponse, SearchResponse } from '@notionhq/client/build/src/api-endpoints.js';
+import { DatabaseObjectResponse, PageObjectResponse } from '@notionhq/client/build/src/api-endpoints.js';
 
 /**
- * Page or Database Notion object response
+ * Page or Database Notion object response.
  */
-export type ObjectResponse = PageObjectResponse | DatabaseObjectResponse;
+export type FullObjectResponse = PageObjectResponse | DatabaseObjectResponse;
+
+/**
+ * Event args for the ObjectUpdated event.
+ */
+export type ObjectUpdatedEventArgs =
+{
+    /**
+     * The updated object.
+     */
+    object: FullObjectResponse,
+
+    /**
+     * Collection of all updated objects.
+     */
+    list: FullObjectResponse[],
+
+    /**
+     * Notion API client.
+     */
+    client: Client
+};
 
 /**
  * Event handler for the ObjectUpdated event.
  */
-export type ObjectUpdatedEventHandler = (object: ObjectResponse, searchResponse: SearchResponse, client: Client) => void;
+export type ObjectUpdatedEventHandler = (args: ObjectUpdatedEventArgs) => void;
