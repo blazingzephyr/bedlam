@@ -4,7 +4,7 @@ import { Worker, isMainThread, parentPort } from "worker_threads";
 import { Client } from "@notionhq/client";
 import { DiscordManager } from "./core/discord_manager.js";
 import { NotionCallback, NotionManager } from "./core/notion_manager.js";
-import { sendEmbed } from "./core/embed.js";
+import { sendEmbed } from "./embed.js";
 import { NotionSearchObject } from "./core/utility.js";
 import * as config from "./config.json" assert { type: "json" };
 

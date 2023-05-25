@@ -1,7 +1,7 @@
 
 import { DiscordManager } from "./core/discord_manager.js";
 import { NotionCallback, NotionManager } from "./core/notion_manager.js";
-import { sendEmbed } from "./core/embed.js";
+import { sendEmbed } from "./embed.js";
 import * as config from "./config.json" assert { type: "json" };
 
 // Discord onKilled event.

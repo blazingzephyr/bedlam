@@ -1,7 +1,7 @@
 
 import { Client } from "@notionhq/client";
 import { AttachmentBuilder, TextBasedChannel } from "discord.js";
-import { NotionSearchObject } from "./utility";
+import { NotionSearchObject } from "./core/utility";
 
 /**
  * 
