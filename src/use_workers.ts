@@ -3,8 +3,8 @@ import { fileURLToPath } from "url";
 import { Worker, isMainThread, parentPort } from "worker_threads";
 import { Client } from "@notionhq/client";
 import { DiscordManager } from "./core/discord_manager.js";
-import { NotionCallback, NotionManager } from "./core/notion_manager.js";
-import { sendEmbed } from "./embed.js";
+import { NotionCallback, NotionManager, NotionSearchError } from "./core/notion_manager.js";
+import { sendEmbed, sendError } from "./embed.js";
 import { NotionSearchObject } from "./core/utility.js";
 import * as config from "./config.json" assert { type: "json" };
 
@@ -16,17 +16,28 @@ type NotionData =
 		/**
 		* Type of the message.
 		*/
-		type: string,
+		type: "updated",
 
 		/**
 		* Notion resources that have been updated.
 		*/
-		updated?: NotionSearchObject[],
+		updated: NotionSearchObject[],
 
 		/**
 		* All Notion Search resources.
 		*/
-		objects?: NotionSearchObject[];
+		objects: NotionSearchObject[];
+	} |
+	{
+		/**
+		* Type of the message.
+		*/
+		type: "error",
+
+		/**
+		* Notion Search endpoint error.
+		*/
+		error: NotionSearchError
 	};
 
 // Executes if this is the main thread.
@@ -55,7 +66,11 @@ if (isMainThread)
 	{
 		if (value.type == "updated")
 		{
-			sendEmbed(log, value.updated!, value.objects!, secondary);
+			sendEmbed(log, value.updated, value.objects, secondary);
+		}
+		else if (value.type == "error")
+		{
+			sendError(log, value.error)
 		}
 	});
 }
@@ -70,8 +85,14 @@ else
 		parentPort!.postMessage({ type: "updated", updated, objects });
 	};
 
+	// Notion onError event.
+	const error: NotionCallback<"error"> = async (error) =>
+	{
+		parentPort!.postMessage({ type: "error", error });
+	};
+
 	// Initialize the manager and watch.
 	// @ts-expect-error is used because of an error of the TypeScript analyser.
-	const notion = new NotionManager(config.default.notion, [], [updated]);
+	const notion = new NotionManager(config.default.notion, [], [updated], [error]);
 	await notion.watch();
 }

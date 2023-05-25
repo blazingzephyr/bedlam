@@ -1,5 +1,5 @@
 
-import { Client } from "@notionhq/client";
+import { Client, NotionClientError, isNotionClientError } from "@notionhq/client";
 import { SearchParameters } from "@notionhq/client/build/src/api-endpoints";
 import
 {
@@ -7,6 +7,28 @@ import
 	NotionSearchObject,
 	callAll
 } from "./utility.js";
+
+/**
+ * The Search endpoint error.
+ */
+export type NotionSearchError =
+	{
+		isNotionError: true, error: NotionClientError;
+	} |
+	{
+		isNotionError: false, error: unknown;
+	};
+
+/**
+ * The Search endpoint response.
+ */
+export type NotionSearchResponse =
+	{
+		isError: true, error: NotionSearchError;
+	} |
+	{
+		isError: false, list: NotionSearchObject[];
+	};
 
 /**
  * NotionManager events.
@@ -21,7 +43,12 @@ export interface NotionEvents
 	/**
 	 * Occurs when a Notion resource gets updated.
 	 */
-	updated: [updated: NotionSearchObject[], objects: NotionSearchObject[], client: Client];
+	updated: [updated: NotionSearchObject[], objects: NotionSearchObject[], client: Client],
+
+	/**
+	 * Occurs when an error is thrown.
+	 */
+	error: [error: NotionSearchError, client: Client];
 }
 
 /**
@@ -32,7 +59,7 @@ export type NotionCallback<T extends keyof NotionEvents> = Callback<NotionEvents
 /**
  * NotionManager options.
  */
-type NotionOptions =
+export type NotionOptions =
 	{
 		/**
 		 * Notion integration token.
@@ -56,11 +83,13 @@ export class NotionManager
 	 * @param options Manager initialization options.
 	 * @param onReady Callbacks called when the Notion API client is ready.
 	 * @param onUpdated Callbacks called when a Notion resource gets updated.
+	 * @param onError Callbacks called when an error occurs.
 	 */
 	constructor(
 		private readonly options: NotionOptions,
 		public onReady: NotionCallback<"ready">[],
-		public onUpdated: NotionCallback<"updated">[]
+		public onUpdated: NotionCallback<"updated">[],
+		public onError: NotionCallback<"error">[]
 	)
 	{
 		this.client = new Client({ auth: options.integration_token });
@@ -72,23 +101,35 @@ export class NotionManager
 	public async watch(): Promise<void>
 	{
 		const current = new Map<string, string>();
-		const list = await this.search();
+		const searchResponse = await this.search();
 
-		for (const entry of list)
+		if (searchResponse.isError)
+		{
+			callAll(this.onError, searchResponse.error, this.client);
+			return;
+		}
+
+		for (const entry of searchResponse.list)
 		{
 			current.set(entry.id, entry.last_edited_time);
 		}
 
-		callAll(this.onReady, list, this.client);
+		callAll(this.onReady, searchResponse.list, this.client);
 
 		setInterval
 			(
 				async () =>
 				{
 					let updated: NotionSearchObject[] = [];
-					const list = await this.search();
+					const searchResponse = await this.search();
 
-					for (const entry of list)
+					if (searchResponse.isError)
+					{
+						callAll(this.onError, searchResponse.error, this.client);
+						return;
+					}
+
+					for (const entry of searchResponse.list)
 					{
 						const object = entry as NotionSearchObject;
 						const requiresUpdate = !current.has(object.id) || object.last_edited_time !== current.get(object.id);
@@ -102,7 +143,7 @@ export class NotionManager
 
 					if (updated.length > 0)
 					{
-						callAll(this.onUpdated, updated, list, this.client);
+						callAll(this.onUpdated, updated, searchResponse.list, this.client);
 					}
 				},
 				this.options.interval
@@ -111,25 +152,39 @@ export class NotionManager
 
 	/**
 	 * Search all pages or databases that has been shared with the integration.
-	 * @returns An array of NotionSearchObjects.
+	 * @returns Notion response.
 	 */
-	private async search(): Promise<NotionSearchObject[]>
+	private async search(): Promise<NotionSearchResponse>
 	{
-		let searchParameters: SearchParameters = { sort: { direction: "descending", timestamp: "last_edited_time" } };
-		let searchObjects: NotionSearchObject[] = [];
-		let hasMore = true;
-
-		while (hasMore)
+		try
 		{
-			const response = await this.client.search(searchParameters);
-			const results = response.results as NotionSearchObject[];
-			searchObjects.push(...results);
+			let searchParameters: SearchParameters = { sort: { direction: "descending", timestamp: "last_edited_time" } };
+			let searchObjects: NotionSearchObject[] = [];
+			let hasMore = true;
 
-			hasMore = response.has_more;
-			searchParameters.start_cursor = response.next_cursor ?? "";
+			while (hasMore)
+			{
+				const response = await this.client.search(searchParameters);
+				const results = response.results as NotionSearchObject[];
+				searchObjects.push(...results);
+
+				hasMore = response.has_more;
+				searchParameters.start_cursor = response.next_cursor ?? "";
+			}
+
+			return { isError: false, list: searchObjects };
 		}
-
-		return searchObjects;
+		catch (error: unknown)
+		{
+			if (isNotionClientError(error))
+			{
+				return { isError: true, error: { isNotionError: true, error } };
+			}
+			else
+			{
+				return { isError: true, error: { isNotionError: false, error } };
+			}
+		}
 	}
 
 	/**
