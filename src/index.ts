@@ -8,6 +8,27 @@ import { sendEmbed } from "./embed.js";
 import { NotionSearchObject } from "./utility.js";
 import * as config from "./config.json" assert { type: "json" };
 
+/**
+ * Data transfered from the Notion thread to the main one.
+ */
+type NotionData =
+{
+	/**
+	 * Type of the message.
+	 */
+	type: string,
+
+	/**
+	 * Notion resources that have been updated.
+	 */
+	updated?: NotionSearchObject[],
+
+	/**
+	 * All Notion Search resources.
+	 */
+	objects?: NotionSearchObject[]
+};
+
 // Executes if this is the main thread.
 // Used for Discord message processing.
 if (isMainThread)
@@ -25,15 +46,16 @@ if (isMainThread)
 	const manager = new DiscordManager(config.default.discord, [killed]);
 	const log = await manager.initialize();
 
+	// Declare the secondary Notion client used on embed events.
+	// @ts-expect-error is used because of an error of the TypeScript analyser.
+	const secondary = new Client({ auth: config.default.notion.integration_token });
+
 	// Listen to the Notion updates.
-	notionThread.on("message", async value =>
+	notionThread.on("message", async (value: NotionData) =>
 	{
-		if (value["type"] == "updated")
+		if (value.type == "updated")
 		{
-			sendEmbed(log,
-				value["updated"] as NotionSearchObject[],
-				value["objects"] as NotionSearchObject[],
-				value["client"] as Client);
+			sendEmbed(log, value.updated!, value.objects!, secondary);
 		}
 	});
 }
@@ -45,7 +67,7 @@ else
 	// Transfers data to the Discord thread.
 	const updated: NotionCallback<"updated"> = async (updated, objects, client) =>
 	{
-		parentPort!.postMessage({ type: "updated", updated: updated, objects: objects, client: client });
+		parentPort!.postMessage({ type: "updated", updated, objects });
 	}
 
 	// Initialize the manager and watch.

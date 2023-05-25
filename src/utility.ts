@@ -18,15 +18,12 @@ export type Callback<T = [], TResult = void> = T extends any[] ? (...args: T) =>
  * @param args Passed arguments.
  * @returns Results of the callbacks.
  */
-export async function callAll<T extends any[] = [], TResult = void>(
-	...params: T extends any[] ? [callbacks: Callback<T, TResult>[], ...args: T] :
-								 [callbacks: Callback<T, TResult>[], arg: T]
-): Promise<TResult[]>
+export async function callAll<T extends any[] = [], TResult = void>(callbacks: Callback<T, TResult>[], ...args: T): Promise<TResult[]>
 {
 	let results: TResult[] = [];
-	for (const callback of params[0])
+	for (const callback of callbacks)
 	{
-		const result = await callback(params[1]);
+		const result = await callback(...args);
 		results.push(result);
 	}
 
