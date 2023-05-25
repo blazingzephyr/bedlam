@@ -1,24 +1,56 @@
 {
-    "notion":
-    {
-        "integrationToken": "",
-        "interval": 15000
+  "notion": {
+    "#integration_token": "Notion integration token, acquired on Notion Developer portal.",
+    "integration_token": "",
+
+    "#interval": "Interval in milliseconds between Notion API requests.",
+    "#interval_notice": "There's no point in using an interval lesser than a minute-long one, as Notion last_edited_time only includes minutes.",
+    "interval": 60000
+  },
+
+  "discord": {
+    "#client_id": "Client ID, acquired at https://discord.com/developers/applications/app_id/oauth2/general.",
+    "client_id": "",
+
+    "#token": "Discord bot token, acquired on Discord Developer portal.",
+    "token": "",
+
+    "#intents": "Specify your gateway intents https://discord.com/developers/docs/topics/gateway#gateway-intents.",
+    "#standard_intents": "Use '524287' for all intents.",
+    "intents": 524287,
+
+    "#owner": "Bot owner Discord ID.",
+    "owner": "",
+
+    "#log": "Log channel ID, channel can be both DM channel and guild channel.",
+    "log": "",
+
+    "#startup_null": "Set 'startup' to 'null' if you want the bot to not send anything on startup.",
+    "#startup_behaviour": "Otherwise, use the discord.js message structure.",
+    "startup": {
+      "content": "I am ready."
     },
 
-    "discord":
-    {
-        "token": "",
-        "intents": 524287,
-        "log": ""
+    "#kill": "/kill slash command.",
+    "kill": {
+      "name": "kill",
+      "description": "Immediately shuts down the bot.",
+      "name_localizations": { "ru": "убить" },
+      "description_localizations": { "ru": "Мгновенно выключает бота." },
+      "default_member_permissions": 8,
+      "dm_permission": true,
+      "nsfw": false
     },
 
-    "startup":
-    {
-        "content": "I'm ready!"
-    },
-
-    "embed":
-    {
-        "color": 16711845
+    "#kill_reply": "Kill reply options",
+    "#kill_reply_behaviour": "Use the discord.js message structure.",
+    "kill_reply": {
+      "content": "Shutting down..."
     }
+  },
+
+  "embed": {
+    "#behaviour": "Use the discord.js message embed structure here to customize your default embed properties, such as color and etc.",
+    "color": 16711845
+  }
 }

@@ -12,7 +12,7 @@
 		"noUncheckedIndexedAccess": true,
 
 		"module": "ESNext",
-		"moduleResolution": "nodenext",
+		"moduleResolution": "node",
 		"resolveJsonModule": true,
 
 		"declaration": true,
@@ -21,7 +21,7 @@
 		"inlineSources": true,
 		"newLine": "lf",
 		"noEmitHelpers": true,
-		"outDir": "dist",
+		"outDir": "public",
 		"preserveConstEnums": true,
 		"removeComments": false,
 		"sourceMap": true,
@@ -30,8 +30,8 @@
 
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
-		"lib": ["ESNext"],
-		"target": "ES2021",
+		"lib": ["ES2020", "ES2017", "esnext.asynciterable"],
+		"target": "ES2022",
 		"useDefineForClassFields": true
 	},
   	"include": ["src/**/*"],
