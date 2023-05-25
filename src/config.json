@@ -1,4 +1,7 @@
 {
+  "#use_workers": "true to use a separate Worker thread for Notion API requests; otherwise, false.",
+  "use_workers": true,
+
   "notion": {
     "#integration_token": "Notion integration token, acquired on Notion Developer portal.",
     "integration_token": "",
