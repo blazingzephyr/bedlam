@@ -15,5 +15,5 @@ export async function sendEmbed(channel: TextBasedChannel, updated: NotionSearch
 	const text = JSON.stringify({ ch: channel, u: updated, o: objects, cl: client }, null, 2);
 	const buffer = Buffer.from(text);
 	const attachment = new AttachmentBuilder(buffer, { name: "content.json" });
-	await channel.send({ files: [attachment] })
+	await channel.send({ files: [attachment] });
 }

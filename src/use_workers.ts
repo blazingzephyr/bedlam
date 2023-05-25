@@ -12,23 +12,22 @@ import * as config from "./config.json" assert { type: "json" };
  * Data transfered from the Notion thread to the main one.
  */
 type NotionData =
-{
-	/**
-	* Type of the message.
-	*/
-	type: string,
+	{
+		/**
+		* Type of the message.
+		*/
+		type: string,
 
-	/**
-	* Notion resources that have been updated.
-	*/
-	updated?: NotionSearchObject[],
+		/**
+		* Notion resources that have been updated.
+		*/
+		updated?: NotionSearchObject[],
 
-	/**
-	* All Notion Search resources.
-	*/
-	objects?: NotionSearchObject[];
-};
-
+		/**
+		* All Notion Search resources.
+		*/
+		objects?: NotionSearchObject[];
+	};
 
 // Executes if this is the main thread.
 // Used for Discord message processing.

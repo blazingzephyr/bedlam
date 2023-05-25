@@ -1,6 +1,7 @@
 
 import { Callback, callAll } from "./utility.js";
-import {
+import
+{
 	BitFieldResolvable,
 	Client, GatewayIntentsString,
 	InteractionReplyOptions,
@@ -16,88 +17,88 @@ import {
  * Slash command initialization options.
  */
 export type SlashCommandOptions =
-{
-    /**
-     * The name of the command.
-     */
-	name: string,
+	{
+		/**
+		 * The name of the command.
+		 */
+		name: string,
 
-    /**
-     * The name localizations of the command.
-     */
-	name_localizations: LocalizationMap | null,
-	
-    /**
-     * The description of the command.
-     */
-	description: string,
-	
-    /**
-     * The description localizations of the command.
-     */
-	description_localizations: LocalizationMap | null,
-	
-    /**
-     * The set of permissions represented as a bit set for the command.
-     */
-	default_member_permissions: string | bigint | number | null;
+		/**
+		 * The name localizations of the command.
+		 */
+		name_localizations: LocalizationMap | null,
 
-	/**
-     * Indicates whether the command is available in direct messages with the application.
-	 */
-	dm_permission?: boolean | null,
+		/**
+		 * The description of the command.
+		 */
+		description: string,
 
-	/**
-     * Whether the command is NSFW.
-     */
-    nsfw: boolean | undefined
-}
+		/**
+		 * The description localizations of the command.
+		 */
+		description_localizations: LocalizationMap | null,
+
+		/**
+		 * The set of permissions represented as a bit set for the command.
+		 */
+		default_member_permissions: string | bigint | number | null;
+
+		/**
+		 * Indicates whether the command is available in direct messages with the application.
+		 */
+		dm_permission?: boolean | null,
+
+		/**
+		 * Whether the command is NSFW.
+		 */
+		nsfw: boolean | undefined;
+	};
 
 /**
  * DiscordManager options.
  */
 export type DiscordOptions =
-{
-	/**
-	 * API client ID.
-	 */
-	client_id: string,
+	{
+		/**
+		 * API client ID.
+		 */
+		client_id: string,
 
-	/**
-	 * Token used to log into Discord.
-	 */
-	token: string,
+		/**
+		 * Token used to log into Discord.
+		 */
+		token: string,
 
-	/**
-	 * API intents.
-	 */
-	intents: BitFieldResolvable<GatewayIntentsString, number>,
-	
-	/**
-	 * Owner ID.
-	 */
-	owner: string,
+		/**
+		 * API intents.
+		 */
+		intents: BitFieldResolvable<GatewayIntentsString, number>,
 
-	/**
-	 * Log channel ID.
-	 */
-	log: string,
+		/**
+		 * Owner ID.
+		 */
+		owner: string,
 
-	/**
-	 * Startup message.
-	 */
-	startup?: MessageCreateOptions | null,
+		/**
+		 * Log channel ID.
+		 */
+		log: string,
 
-	/**
-	 * '/kill' slash command options.
-	 */
-	kill: SlashCommandOptions,
+		/**
+		 * Startup message.
+		 */
+		startup?: MessageCreateOptions | null,
 
-	/**
-	 * '/kill' reply.
-	 */
-	kill_reply: InteractionReplyOptions;
-};
+		/**
+		 * '/kill' slash command options.
+		 */
+		kill: SlashCommandOptions,
+
+		/**
+		 * '/kill' reply.
+		 */
+		kill_reply: InteractionReplyOptions;
+	};
 
 /**
  * Discord API client wrapper.
@@ -135,14 +136,14 @@ export class DiscordManager
 				this.client.destroy();
 				callAll(onKilled, this.client);
 			}
-		})
+		});
 	}
 
 	/**
 	 * Log into Discord, update the slash commands and fetch the channel.
 	 * @returns Log channel.
 	 */
-	async initialize() : Promise<TextBasedChannel>
+	async initialize(): Promise<TextBasedChannel>
 	{
 		await this.client.login(this.options.token);
 		const channel = await this.client.channels.fetch(this.options.log);
@@ -155,13 +156,13 @@ export class DiscordManager
 			await textChannel.send(this.options.startup);
 		}
 
-		return textChannel
+		return textChannel;
 	}
 
 	/**
 	 * Underlying Discord API client.
 	 */
-	get apiClient() : Client
+	get apiClient(): Client
 	{
 		return this.client;
 	}
