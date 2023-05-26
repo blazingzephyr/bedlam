@@ -28,6 +28,10 @@
     "⁠log": "Log channel ID, channel can be both DM channel and guild channel.",
     "log": "",
 
+    "#startup_channel_null": "Set 'startup_channel' to 'null' if you want the bot to not send anything on startup.",
+    "#startup_channel": "Startup message channel ID, channel can be both DM channel and guild channel.",
+    "startup_channel": "",
+
     "#startup_null": "Set 'startup' to 'null' if you want the bot to not send anything on startup.",
     "#startup_behaviour": "Otherwise, use the discord.js message structure.",
     "startup": {
@@ -61,12 +65,19 @@
     "kill_denied": {
       "embeds": [
         {
-          "title": "You are not allowed to use that!'",
+          "title": "You are not allowed to use that!",
           "description": "If something is wrong with the bot, contact the owner to shut it down instead.",
-          "color": 5794538
+          "color": 5794538,
+          "footer": {
+            "text": "Made by blazingzephyr on GitHub",
+            "icon_url": "https://avatars.githubusercontent.com/u/119159668"
+          }
         }
       ]
     },
+
+    "#owner_header": "Embed author displayed on /kill denial.",
+    "owner_header": "Bot owned by ",
 
     "#kill_reply": "Kill reply options.",
     "#kill_reply_behaviour": "Use the discord.js message structure.",

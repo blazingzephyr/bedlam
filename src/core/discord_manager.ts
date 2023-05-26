@@ -76,6 +76,11 @@ export type DiscordOptions =
 		intents: BitFieldResolvable<GatewayIntentsString, number>,
 
 		/**
+		 * Embed author displayed on /kill denial.
+		 */
+		owner_header: string,
+
+		/**
 		 * Owner ID.
 		 */
 		owner: string,
@@ -84,6 +89,11 @@ export type DiscordOptions =
 		 * Log channel ID.
 		 */
 		log: string,
+
+		/**
+		 * Startup message channel ID.
+		 */
+		startup_channel?: string | null,
 
 		/**
 		 * Startup message.
@@ -145,7 +155,7 @@ export class DiscordManager
 					{
 						const owner = await this.client.users.fetch(options.owner);
 						const embed = reply.embeds[0] as APIEmbed;
-						embed.author = { name: owner.tag, icon_url: owner.displayAvatarURL() }
+						embed.author = { name: options.owner_header + owner.tag, icon_url: owner.displayAvatarURL() }
 					}
 
 					await interaction.reply(reply);
@@ -168,16 +178,18 @@ export class DiscordManager
 	{
 		await this.client.login(this.options.token);
 		const channel = await this.client.channels.fetch(this.options.log);
-		const textChannel = channel as TextBasedChannel;
+		const log = channel as TextBasedChannel;
 
 		await this.rest.put(Routes.applicationCommands(this.options.client_id), { body: [this.kill] });
 
-		if (this.options.startup)
+		if (this.options.startup && this.options.startup_channel)
 		{
-			await textChannel.send(this.options.startup);
+			const channel = await this.client.channels.fetch(this.options.startup_channel);
+			const startupChannel = channel as TextBasedChannel;
+			await startupChannel.send(this.options.startup);
 		}
 
-		return textChannel;
+		return log;
 	}
 
 	/**
