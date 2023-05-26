@@ -2,6 +2,7 @@
 import { Callback, callAll } from "./utility.js";
 import
 	{
+		APIEmbed,
 		BitFieldResolvable,
 		Client, GatewayIntentsString,
 		InteractionReplyOptions,
@@ -95,6 +96,11 @@ export type DiscordOptions =
 		kill: SlashCommandOptions,
 
 		/**
+		 * '/kill' denial options.
+		 */
+		kill_denied: InteractionReplyOptions;
+
+		/**
 		 * '/kill' reply.
 		 */
 		kill_reply: InteractionReplyOptions;
@@ -132,9 +138,24 @@ export class DiscordManager
 		{
 			if (interaction.isCommand() && interaction.commandName == killOptions.name)
 			{
-				await interaction.reply(options.kill_reply);
-				this.client.destroy();
-				callAll(onKilled, this.client);
+				if (interaction.user.id != options.owner)
+				{
+					const reply = options.kill_denied;
+					if (reply.embeds && reply.embeds.length > 0)
+					{
+						const owner = await this.client.users.fetch(options.owner);
+						const embed = reply.embeds[0] as APIEmbed;
+						embed.author = { name: owner.tag, icon_url: owner.displayAvatarURL() }
+					}
+
+					await interaction.reply(reply);
+				}
+				else
+				{
+					await interaction.reply(options.kill_reply);
+					this.client.destroy();
+					callAll(onKilled, this.client);
+				}
 			}
 		});
 	}

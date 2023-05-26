@@ -56,7 +56,19 @@
       "nsfw": false
     },
 
-    "#kill_reply": "Kill reply options",
+    "#kill_denied": "Is thrown when a non-owner tries to use /kill.",
+    "#kill_denied_behaviour": "Use the discord.js message structure.",
+    "kill_denied": {
+      "embeds": [
+        {
+          "title": "You are not allowed to use that!'",
+          "description": "If something is wrong with the bot, contact the owner to shut it down instead.",
+          "color": 5794538
+        }
+      ]
+    },
+
+    "#kill_reply": "Kill reply options.",
     "#kill_reply_behaviour": "Use the discord.js message structure.",
     "kill_reply": {
       "embeds": [
