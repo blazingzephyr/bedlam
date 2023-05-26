@@ -1,4 +1,5 @@
 
+import { NotionClientError, isNotionClientError } from "@notionhq/client";
 import { DatabaseObjectResponse, PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
 /**
@@ -28,4 +29,29 @@ export async function callAll<T extends any[] = [], TResult = void>(callbacks: C
 	}
 
 	return results;
+}
+
+export type NotionError =
+	{
+		isNotionError: true, error: NotionClientError;
+	} |
+	{
+		isNotionError: false, error: unknown;
+	};
+
+/**
+ * 
+ * @param error
+ * @returns
+ */
+export function processError(error: unknown): NotionError
+{
+	if (isNotionClientError(error))
+	{
+		return { isNotionError: true, error };
+	}
+	else
+	{
+		return { isNotionError: false, error };
+	}
 }

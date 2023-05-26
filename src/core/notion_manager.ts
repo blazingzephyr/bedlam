@@ -1,30 +1,21 @@
 
-import { Client, NotionClientError, isNotionClientError } from "@notionhq/client";
+import { Client } from "@notionhq/client";
 import { SearchParameters } from "@notionhq/client/build/src/api-endpoints";
 import
-{
-	Callback,
-	NotionSearchObject,
-	callAll
-} from "./utility.js";
-
-/**
- * The Search endpoint error.
- */
-export type NotionSearchError =
 	{
-		isNotionError: true, error: NotionClientError;
-	} |
-	{
-		isNotionError: false, error: unknown;
-	};
+		Callback,
+		NotionError,
+		NotionSearchObject,
+		callAll,
+		processError
+	} from "./utility.js";
 
 /**
  * The Search endpoint response.
  */
 export type NotionSearchResponse =
 	{
-		isError: true, error: NotionSearchError;
+		isError: true, error: NotionError;
 	} |
 	{
 		isError: false, list: NotionSearchObject[];
@@ -48,7 +39,7 @@ export interface NotionEvents
 	/**
 	 * Occurs when an error is thrown.
 	 */
-	error: [error: NotionSearchError, client: Client];
+	error: [error: NotionError, client: Client];
 }
 
 /**
@@ -176,14 +167,7 @@ export class NotionManager
 		}
 		catch (error: unknown)
 		{
-			if (isNotionClientError(error))
-			{
-				return { isError: true, error: { isNotionError: true, error } };
-			}
-			else
-			{
-				return { isError: true, error: { isNotionError: false, error } };
-			}
+			return { isError: true, error: processError(error) };
 		}
 	}
 

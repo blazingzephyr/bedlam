@@ -1,17 +1,17 @@
 
 import { Callback, callAll } from "./utility.js";
 import
-{
-	BitFieldResolvable,
-	Client, GatewayIntentsString,
-	InteractionReplyOptions,
-	LocalizationMap,
-	MessageCreateOptions,
-	REST,
-	Routes,
-	SlashCommandBuilder,
-	TextBasedChannel
-} from "discord.js";
+	{
+		BitFieldResolvable,
+		Client, GatewayIntentsString,
+		InteractionReplyOptions,
+		LocalizationMap,
+		MessageCreateOptions,
+		REST,
+		Routes,
+		SlashCommandBuilder,
+		TextBasedChannel
+	} from "discord.js";
 
 /**
  * Slash command initialization options.

@@ -25,13 +25,24 @@
     "#owner": "Bot owner Discord ID.",
     "owner": "",
 
-    "#log": "Log channel ID, channel can be both DM channel and guild channel.",
+    "⁠log": "Log channel ID, channel can be both DM channel and guild channel.",
     "log": "",
 
     "#startup_null": "Set 'startup' to 'null' if you want the bot to not send anything on startup.",
     "#startup_behaviour": "Otherwise, use the discord.js message structure.",
     "startup": {
-      "content": "I am ready."
+      "embeds": [
+        {
+          "title": "I am ready!",
+          "description": "Currently fetching the latest Notion resources...",
+          "color": 5794538,
+          "footer": {
+            "text": "GitHub︱blazingzephyr︱Discord︱blazingzephyr#4504",
+            "icon_url": "https://avatars.githubusercontent.com/u/119159668"
+          },
+          "url": "https://github.com/blazingzephyr/bedlam"
+        }
+      ]
     },
 
     "#kill": "/kill slash command.",
@@ -48,12 +59,44 @@
     "#kill_reply": "Kill reply options",
     "#kill_reply_behaviour": "Use the discord.js message structure.",
     "kill_reply": {
-      "content": "Shutting down..."
+      "embeds": [
+        {
+          "title": "Shutting down...",
+          "description": "Both Discord and Notion API clients are about to be terminated immediately.",
+          "color": 5794538,
+          "footer": {
+            "text": "Made by blazingzephyr on GitHub",
+            "icon_url": "https://avatars.githubusercontent.com/u/119159668"
+          }
+        }
+      ]
     }
   },
 
+  "#embed": "Use the discord.js message embed structure here to customize your default embed properties, such as color and etc.",
   "embed": {
-    "#behaviour": "Use the discord.js message embed structure here to customize your default embed properties, such as color and etc.",
-    "color": 16711845
+    "color": 5794538,
+    "footer": {
+      "text": "Made by blazingzephyr on GitHub",
+      "icon_url": "https://avatars.githubusercontent.com/u/119159668"
+    }
+  },
+
+  "error": {
+    "#isNotion": "Field header.",
+    "isNotion": "Has occured on Notion API request",
+
+    "#message": "Field header.",
+    "message": "Error message",
+
+    "#embed": "Use the discord.js message embed structure here to customize your default error embed properties, such as color and etc.",
+    "embed": {
+      "title": "An error has just occured!",
+      "color": 5794538,
+      "footer": {
+        "text": "Made by blazingzephyr on GitHub",
+        "icon_url": "https://avatars.githubusercontent.com/u/119159668"
+      }
+    }
   }
 }

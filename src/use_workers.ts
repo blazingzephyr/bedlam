@@ -3,9 +3,9 @@ import { fileURLToPath } from "url";
 import { Worker, isMainThread, parentPort } from "worker_threads";
 import { Client } from "@notionhq/client";
 import { DiscordManager } from "./core/discord_manager.js";
-import { NotionCallback, NotionManager, NotionSearchError } from "./core/notion_manager.js";
+import { NotionCallback, NotionManager } from "./core/notion_manager.js";
 import { sendEmbed, sendError } from "./embed.js";
-import { NotionSearchObject } from "./core/utility.js";
+import { NotionError, NotionSearchObject } from "./core/utility.js";
 import * as config from "./config.json" assert { type: "json" };
 
 /**
@@ -37,7 +37,7 @@ type NotionData =
 		/**
 		* Notion Search endpoint error.
 		*/
-		error: NotionSearchError
+		error: NotionError
 	};
 
 // Executes if this is the main thread.
