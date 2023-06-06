@@ -16,6 +16,8 @@
   "type": "module",
   "dependencies": {
     "@notionhq/client": "^2.2.5",
+    "@types/clone": "^2.1.1",
+    "clone": "^2.1.2",
     "discord.js": "^14.11.0",
     "dotenv": "^16.0.3",
     "typescript": "^5.0.4"

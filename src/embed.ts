@@ -1,4 +1,5 @@
 
+import clone from "clone";
 import { Client } from "@notionhq/client";
 import * as config from "./config.json" assert { type: "json" };
 
@@ -229,7 +230,7 @@ export async function sendEmbed(channel: TextBasedChannel, updated: NotionSearch
 			do
 			{
 				// @ts-expect-error is used because of an error of the TypeScript analyser.
-				const embed: APIEmbed = structuredClone(config.default.embed);
+				const embed: APIEmbed = clone(config.default.embed);
 				embed.fields = [];
 				embed.timestamp = resource.last_edited_time;
 
