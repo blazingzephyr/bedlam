@@ -1,4 +1,18 @@
 {
+  "author": {
+    "name": "blazingzephyr",
+    "url": "https://github.com/blazingzephyr",
+    "email": "blazingzephyrofficial@gmail.com"
+  },
+  "repository": {
+    "url": "https://github.com/blazingzephyr/bedlam",
+    "email": "blazingzephyrofficial@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/blazingzephyr/bedlam/issues",
+    "email": "blazingzephyrofficial@gmail.com"
+  },
+  "readme": "https://github.com/blazingzephyr/bedlam/README.md",
   "type": "module",
   "dependencies": {
     "@notionhq/client": "^2.2.5",
@@ -7,6 +21,7 @@
     "typescript": "^5.0.4"
   },
   "scripts": {
-    "build": "npx tsc && node public/index.js"
+    "build": "npx tsc",
+    "start": "node public/index.js"
   }
 }
