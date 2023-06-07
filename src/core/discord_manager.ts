@@ -133,6 +133,7 @@ export class DiscordManager
 	{
 		this.client = new Client({ intents: options.intents });
 		this.rest = new REST().setToken(options.token);
+		this.killed = false;
 
 		const killOptions = options.kill;
 		this.kill = new SlashCommandBuilder()
@@ -162,9 +163,11 @@ export class DiscordManager
 				}
 				else
 				{
+					this.killed = true;
 					await interaction.reply(options.kill_reply);
-					this.client.destroy();
+
 					callAll(onKilled, this.client);
+					this.client.destroy();
 				}
 			}
 		});
@@ -201,6 +204,14 @@ export class DiscordManager
 	}
 
 	/**
+	 * true if this manager has been killed; false otherwise.
+	 */
+	get isKilled(): boolean
+	{
+		return this.killed;
+	}
+
+	/**
 	 * Discord API client.
 	 */
 	private client: Client;
@@ -214,4 +225,9 @@ export class DiscordManager
 	 * '/kill' slash command.
 	 */
 	private kill: SlashCommandBuilder;
+
+	/**
+	 * Manager death state.
+	 */
+	private killed: boolean;
 }

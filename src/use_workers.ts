@@ -66,11 +66,11 @@ if (isMainThread)
 	{
 		if (value.type == "updated")
 		{
-			sendEmbed(log, value.updated, value.objects, secondary);
+			sendEmbed(log, discord, value.updated, value.objects, secondary);
 		}
 		else if (value.type == "error")
 		{
-			sendError(log, value.error)
+			sendError(log, discord, value.error)
 		}
 	});
 }

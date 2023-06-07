@@ -1,6 +1,7 @@
 
 import clone from "clone";
 import { Client } from "@notionhq/client";
+import { DiscordManager } from "./core/discord_manager";
 import * as config from "./config.json" assert { type: "json" };
 
 import
@@ -14,7 +15,6 @@ import
 	{
 		APIEmbed,
 		APIEmbedField,
-		EmbedBuilder,
 		TextBasedChannel
 	} from "discord.js";
 
@@ -175,13 +175,13 @@ function getTitle(object: NotionSearchObject)
 	}
 	else
 	{
-		const keys = Object.keys(object.properties);
-		const titleKey = keys.find(p => p.toLowerCase() == "title" || p.toLowerCase() == "name")!;
+		const keys = Object.keys(object);
+		const key = keys.includes("title") ? "title" : "Name";
 
-		const titleProperty = object.properties[titleKey] ?? { type: null };
-		if (titleProperty.type == "title")
+		const property = object.properties[key];
+		if (property?.type == "title")
 		{
-			return getRichText(titleProperty.title);
+			return getRichText(property.title);
 		}
 	}
 
@@ -215,7 +215,7 @@ function getRelations(objects: NotionSearchObject[], relations: Relation[])
  * @param objects All Notion Search resources.
  * @param client Notion API client for additional calls.
  */
-export async function sendEmbed(channel: TextBasedChannel, updated: NotionSearchObject[], objects: NotionSearchObject[], client: Client)
+export async function sendEmbed(channel: TextBasedChannel, manager: DiscordManager, updated: NotionSearchObject[], objects: NotionSearchObject[], client: Client)
 {
 	const resources = objects;
 	for (const resource of updated)
@@ -420,7 +420,7 @@ export async function sendEmbed(channel: TextBasedChannel, updated: NotionSearch
 		}
 		catch (error: unknown)
 		{
-			sendError(channel, processError(error));
+			sendError(channel, manager, processError(error));
 		}		
 	}
 }
@@ -430,18 +430,21 @@ export async function sendEmbed(channel: TextBasedChannel, updated: NotionSearch
  * @param channel Channel to send the error to.
  * @param error An error.
  */
-export async function sendError(channel: TextBasedChannel, error: NotionError)
+export async function sendError(channel: TextBasedChannel, manager: DiscordManager,  error: NotionError)
 {
-	// @ts-expect-error is used because of an error of the TypeScript analyser.
-	const embed: APIEmbed = config.default.error.embed;
-	embed.timestamp = new Date().toISOString();
-	embed.fields = [
+	if (!manager.isKilled)
+	{
 		// @ts-expect-error is used because of an error of the TypeScript analyser.
-		{ name: config.default.error.isNotion, value: error.isNotionError.toString() },
-
-	// @ts-expect-error is used because of an error of the TypeScript analyser.
-		{ name: config.default.error.message, value: error.isNotionError ? error.error.message : "```" + JSON.stringify(error.error) + "```" }
-	];
-
-	await channel.send({ embeds: [embed] });
+		const embed: APIEmbed = config.default.error.embed;
+		embed.timestamp = new Date().toISOString();
+		embed.fields = [
+			// @ts-expect-error is used because of an error of the TypeScript analyser.
+			{ name: config.default.error.isNotion, value: error.isNotionError.toString() },
+	
+		// @ts-expect-error is used because of an error of the TypeScript analyser.
+			{ name: config.default.error.message, value: error.isNotionError ? error.error.message : "```" + JSON.stringify(error.error) + "```" }
+		];
+	
+		await channel.send({ embeds: [embed] });
+	}
 }
