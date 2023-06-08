@@ -175,13 +175,14 @@ function getTitle(object: NotionSearchObject)
 	}
 	else
 	{
-		const keys = Object.keys(object);
-		const key = keys.includes("title") ? "title" : "Name";
-
-		const property = object.properties[key];
-		if (property?.type == "title")
+		const keys = Object.keys(object.properties);
+		for (const key of keys) 
 		{
-			return getRichText(property.title);
+			const property = object.properties[key];
+			if (property?.type == "title") 
+			{
+				return getRichText(property.title);
+			}
 		}
 	}
 
