@@ -96,6 +96,9 @@
     }
   },
 
+  "#display_properties": "An array of page properties to display. Set this to 'null' if you want to show all properties.",
+  "display_properties": null,
+
   "#embed": "Use the discord.js message embed structure here to customize your default embed properties, such as color and etc.",
   "embed": {
     "color": 5794538,

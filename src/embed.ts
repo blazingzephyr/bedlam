@@ -228,6 +228,10 @@ export async function sendEmbed(channel: TextBasedChannel, manager: DiscordManag
 			const embeds: APIEmbed[] = [];
 			const keys = Object.keys(resource.properties);
 
+			// @ts-expect-error is used because of an error of the TypeScript analyser.
+			const displayProperties: string[] | null = config.default.display_properties;
+			const displayedKeys = displayProperties ? keys.filter(e => displayProperties.includes(e)) : keys;
+
 			do
 			{
 				// @ts-expect-error is used because of an error of the TypeScript analyser.
@@ -235,9 +239,9 @@ export async function sendEmbed(channel: TextBasedChannel, manager: DiscordManag
 				embed.fields = [];
 				embed.timestamp = resource.last_edited_time;
 
-				for (let i = 0; i < 25 && keys.length > 0; i++)
+				for (let i = 0; i < 25 && displayedKeys.length > 0; i++)
 				{
-					const key = keys.shift()!;
+					const key = displayedKeys.shift()!;
 					const property = resource.properties[key]!;
 					const field: APIEmbedField = { name: key, value: "Empty" };
 
@@ -376,7 +380,7 @@ export async function sendEmbed(channel: TextBasedChannel, manager: DiscordManag
 
 				embeds.push(embed);
 			}
-			while (keys.length > 0);
+			while (displayedKeys.length > 0);
 
 			const author = await client.users.retrieve({ user_id: resource.last_edited_by.id });
 			const icon = resource.icon;
